@@ -6,7 +6,7 @@ import javax.sql.DataSource;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
-public class ConexionDB implements AutoCloseable {
+public class ConexionDB {
     private DataSource dataSource;
 
     public ConexionDB() {
@@ -23,13 +23,6 @@ public class ConexionDB implements AutoCloseable {
             return this.dataSource.getConnection();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void close() {
-        if (dataSource instanceof ComboPooledDataSource) {
-            ((ComboPooledDataSource) dataSource).close(); // Cierra la fuente de datos.
         }
     }
 }
