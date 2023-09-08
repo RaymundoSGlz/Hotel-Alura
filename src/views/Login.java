@@ -1,22 +1,25 @@
 package views;
 
-import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.ImageIcon;
-import javax.swing.JTextField;
-import javax.swing.JSeparator;
-import java.awt.SystemColor;
+import java.awt.EventQueue;
 import java.awt.Font;
-import javax.swing.JPasswordField;
-import javax.swing.SwingConstants;
+import java.awt.SystemColor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import controller.LoginController;
 
 public class Login extends JFrame {
 
@@ -180,7 +183,9 @@ public class Login extends JFrame {
 		lblContrasena.setBounds(65, 316, 140, 26);
 		panel.add(lblContrasena);
 
-		JPanel btnLogin = new JPanel();
+		// Login button
+		JButton btnLogin = new JButton();
+		btnLogin.addActionListener(new LoginController(this));
 		btnLogin.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -190,11 +195,6 @@ public class Login extends JFrame {
 			@Override
 			public void mouseExited(MouseEvent e) {
 				btnLogin.setBackground(SystemColor.textHighlight);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				uLogin();
 			}
 		});
 		btnLogin.setBackground(SystemColor.textHighlight);
@@ -236,21 +236,6 @@ public class Login extends JFrame {
 		header.setLayout(null);
 	}
 
-	private void uLogin() {
-		String Usuario = "admin";
-		String Contraseña = "admin";
-
-		String clave = new String(txtContrasena.getPassword());
-
-		if (txtUsuario.getText().equals(Usuario) && clave.equals(Contraseña)) {
-			MenuUsuario menu = new MenuUsuario();
-			menu.setVisible(true);
-			dispose();
-		} else {
-			JOptionPane.showMessageDialog(this, "Usuario o Contraseña no válidos");
-		}
-	}
-
 	private void headerMousePressed(java.awt.event.MouseEvent evt) {
 		xMouse = evt.getX();
 		yMouse = evt.getY();
@@ -260,5 +245,13 @@ public class Login extends JFrame {
 		int x = evt.getXOnScreen();
 		int y = evt.getYOnScreen();
 		this.setLocation(x - xMouse, y - yMouse);
+	}
+
+	public String getContraseña() {
+		return new String(txtContrasena.getPassword());
+	}
+
+	public String getUsuario() {
+		return txtUsuario.getText();
 	}
 }
