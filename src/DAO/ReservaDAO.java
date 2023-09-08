@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import modelo.Reserva;
 
 public class ReservaDAO {
@@ -35,6 +38,49 @@ public class ReservaDAO {
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al guardar la reserva en la base de datos.", e);
+        }
+    }
+
+    public List<Reserva> buscar() {
+        List<Reserva> reservas = new ArrayList<Reserva>();
+        try {
+            String sql = "SELECT id, fecha_entrada, fecha_salida, valor,forma_de_pago FROM reservas";
+
+            try (PreparedStatement stm = conexion.prepareStatement(sql)) {
+                stm.execute();
+
+                transFormarResultSetEnReserva(reservas, stm);
+            }
+            return reservas;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Reserva> buscarId(String id) {
+        List<Reserva> reservas = new ArrayList<Reserva>();
+        try {
+            String sql = "SELECT id, fecha_entrada, fecha_salida, valor,forma_de_pago FROM reservas WHERE  id= ?";
+
+            try (PreparedStatement stm = conexion.prepareStatement(sql)) {
+                stm.setString(1, id);
+                stm.execute();
+
+                transFormarResultSetEnReserva(reservas, stm);
+            }
+            return reservas;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void transFormarResultSetEnReserva(List<Reserva> reservas, PreparedStatement stm) throws SQLException {
+        try (ResultSet rst = stm.getResultSet()) {
+            while (rst.next()) {
+                Reserva producto = new Reserva(rst.getInt(1), rst.getDate(2), rst.getDate(3), rst.getString(4),
+                        rst.getString(5));
+                reservas.add(producto);
+            }
         }
     }
 }

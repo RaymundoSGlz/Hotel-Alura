@@ -1,6 +1,7 @@
 package controller;
 
 import java.sql.Connection;
+import java.util.List;
 
 import DAO.HuespedDAO;
 import factory.ConexionDB;
@@ -18,6 +19,18 @@ public class HuespedController {
 
     public void guardar(Huesped huesped) {
         huespedDAO.guardar(huesped);
+    }
+
+    public List<Huesped> buscar() {
+        return this.huespedDAO.buscar();
+    }
+
+    public List<Huesped> buscarId(String id) {
+        return this.huespedDAO.buscarId(id);
+    }
+
+    public List<Huesped> buscarApellidoHuesped(String apellido) {
+        return this.huespedDAO.buscarApellidoHuesped(apellido);
     }
 
 }

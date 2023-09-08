@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -22,6 +23,11 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import controller.HuespedController;
+import controller.ReservaController;
+import modelo.Huesped;
+import modelo.Reserva;
+
 public class Busqueda extends JFrame {
 
 	private JPanel contentPane;
@@ -33,6 +39,11 @@ public class Busqueda extends JFrame {
 	private JLabel labelAtras;
 	private JLabel labelExit;
 	int xMouse, yMouse;
+
+	private ReservaController reservaController;
+	private HuespedController huespedController;
+	String reserva;
+	String huesped;
 
 	/**
 	 * Launch the application.
@@ -54,6 +65,9 @@ public class Busqueda extends JFrame {
 	 * Create the frame.
 	 */
 	public Busqueda() {
+
+		reservaController = new ReservaController();
+		huespedController = new HuespedController();
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Busqueda.class.getResource("/imagenes/lupa2.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 571);
@@ -96,6 +110,7 @@ public class Busqueda extends JFrame {
 		panel.addTab("Reservas", new ImageIcon(Busqueda.class.getResource("/imagenes/reservado.png")), scroll_table,
 				null);
 		scroll_table.setVisible(true);
+		mostrarTablaReservas();
 
 		tbHuespedes = new JTable();
 		tbHuespedes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -112,6 +127,7 @@ public class Busqueda extends JFrame {
 		panel.addTab("Huéspedes", new ImageIcon(Busqueda.class.getResource("/imagenes/pessoas.png")),
 				scroll_tableHuespedes, null);
 		scroll_tableHuespedes.setVisible(true);
+		mostrarTablaHuespedes();
 
 		JLabel lblNewLabel_2 = new JLabel("");
 		lblNewLabel_2.setIcon(new ImageIcon(Busqueda.class.getResource("/imagenes/Ha-100px.png")));
@@ -213,6 +229,18 @@ public class Busqueda extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				eliminarTabla(); // Limpiamos la tabla para que no se repitan los datos
+				if (txtBuscar.getText().isEmpty()) {
+					mostrarTablaHuespedes();
+					mostrarTablaReservas();
+				} else {
+					if (txtBuscar.getText().matches("[0-9]*")) {
+						mostrarTablaHuespedesId();
+						mostrarTablaReservasId();
+					} else {
+						mostrarTablaHuespedesApellido();
+					}
+				}
 
 			}
 		});
@@ -271,4 +299,108 @@ public class Busqueda extends JFrame {
 		int y = evt.getYOnScreen();
 		this.setLocation(x - xMouse, y - yMouse);
 	}
+
+	private void eliminarTabla() {
+		((DefaultTableModel) tbHuespedes.getModel()).setRowCount(0);
+		((DefaultTableModel) tbReservas.getModel()).setRowCount(0);
+	}
+
+	// Método que permite buscar los datos de la tabla "Reservas"
+	private List<Reserva> buscarReservas() {
+		return this.reservaController.buscar();
+	}
+
+	// Método que permite buscar los datos de la tabla "Reservas" por id
+	private List<Reserva> buscarReservasId() {
+		return this.reservaController.buscarId(txtBuscar.getText());
+	}
+
+	private List<Huesped> buscarHuespedes() {
+		return this.huespedController.buscar();
+	}
+
+	private List<Huesped> buscarHuespedesId() {
+		return this.huespedController.buscarId(txtBuscar.getText());
+	}
+
+	private List<Huesped> buscarHuespedesApellido() {
+		return this.huespedController.buscarApellidoHuesped(txtBuscar.getText());
+	}
+
+	// Método que permite mostrar los datos de la tabla "Reservas "
+	private void mostrarTablaReservas() {
+		List<Reserva> reserva = buscarReservas();
+		try {
+			for (Reserva res : reserva) {
+				modelo.addRow(new Object[] {
+						res.getId(), res.getFechaE(), res.getFechaS(), res.getValor(), res.getFormaPago()
+				});
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	// Método que permite mostrar los datos de la tabla "Reservas " por id
+	private void mostrarTablaReservasId() {
+		List<Reserva> reserva = buscarReservasId();
+		try {
+			for (Reserva res : reserva) {
+				modelo.addRow(new Object[] {
+						res.getId(), res.getFechaE(), res.getFechaS(), res.getValor(), res.getFormaPago()
+				});
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	private void mostrarTablaHuespedes() {
+		List<Huesped> huespedes = buscarHuespedes();
+
+		try {
+			for (Huesped huespedes1 : huespedes) {
+				modeloHuesped.addRow(new Object[] {
+						huespedes1.getId(), huespedes1.getNombre(), huespedes1.getApellido(),
+						huespedes1.getFechaNacimiento(), huespedes1.getNacionalidad(), huespedes1.getTelefono(),
+						huespedes1.getIdReserva()
+				});
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	private void mostrarTablaHuespedesId() {
+		List<Huesped> huespedes = buscarHuespedesId();
+
+		try {
+			for (Huesped huespedes1 : huespedes) {
+				modeloHuesped.addRow(new Object[] {
+						huespedes1.getId(), huespedes1.getNombre(), huespedes1.getApellido(),
+						huespedes1.getFechaNacimiento(), huespedes1.getNacionalidad(), huespedes1.getTelefono(),
+						huespedes1.getIdReserva()
+				});
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	private void mostrarTablaHuespedesApellido() {
+		List<Huesped> huespedes = buscarHuespedesApellido();
+
+		try {
+			for (Huesped huespedes1 : huespedes) {
+				modeloHuesped.addRow(new Object[] {
+						huespedes1.getId(), huespedes1.getNombre(), huespedes1.getApellido(),
+						huespedes1.getFechaNacimiento(), huespedes1.getNacionalidad(), huespedes1.getTelefono(),
+						huespedes1.getIdReserva()
+				});
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
 }
