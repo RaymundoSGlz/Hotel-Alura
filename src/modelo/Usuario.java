@@ -35,7 +35,7 @@ public class Usuario {
             ConexionDB conexionDB = new ConexionDB();
             Connection connection = conexionDB.conectar();
             PreparedStatement state = connection
-                    .prepareStatement("SELECT * FROM usuarios WHERE nombre = ? AND contraseña = ?");
+                    .prepareStatement("SELECT * FROM usuarios WHERE nombre = ? AND contrasena = ?");
 
             state.setString(1, nombre);
             state.setString(2, contraseña);
