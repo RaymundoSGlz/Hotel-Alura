@@ -1,6 +1,7 @@
 package controller;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.List;
 
 import DAO.HuespedDAO;
@@ -31,6 +32,11 @@ public class HuespedController {
 
     public List<Huesped> buscarApellidoHuesped(String apellido) {
         return this.huespedDAO.buscarApellidoHuesped(apellido);
+    }
+
+    public void actualizar(String nombre, String apellido, Date fechaNacimiento, String nacionalidad, String telefono,
+            int idReserva, int id) {
+        this.huespedDAO.actualizar(nombre, apellido, fechaNacimiento, nacionalidad, telefono, idReserva, id);
     }
 
 }

@@ -7,11 +7,13 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.sql.Date;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -229,17 +231,11 @@ public class Busqueda extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				eliminarTabla(); // Limpiamos la tabla para que no se repitan los datos
-				if (txtBuscar.getText().isEmpty()) {
-					mostrarTablaHuespedes();
-					mostrarTablaReservas();
+				if (txtBuscar.getText().matches("[0-9]*")) {
+					mostrarTablaHuespedesId();
+					mostrarTablaReservasId();
 				} else {
-					if (txtBuscar.getText().matches("[0-9]*")) {
-						mostrarTablaHuespedesId();
-						mostrarTablaReservasId();
-					} else {
-						mostrarTablaHuespedesApellido();
-					}
+					mostrarTablaHuespedesApellido();
 				}
 
 			}
@@ -258,6 +254,12 @@ public class Busqueda extends JFrame {
 		lblBuscar.setFont(new Font("Roboto", Font.PLAIN, 18));
 
 		JPanel btnEditar = new JPanel();
+		btnEditar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				actualizarRegistro();
+			}
+		});
 		btnEditar.setLayout(null);
 		btnEditar.setBackground(new Color(12, 138, 199));
 		btnEditar.setBounds(635, 508, 122, 35);
@@ -300,9 +302,12 @@ public class Busqueda extends JFrame {
 		this.setLocation(x - xMouse, y - yMouse);
 	}
 
-	private void eliminarTabla() {
-		((DefaultTableModel) tbHuespedes.getModel()).setRowCount(0);
+	private void eliminarTablaReservas() {
 		((DefaultTableModel) tbReservas.getModel()).setRowCount(0);
+	}
+
+	private void eliminarTablaHuespedes() {
+		((DefaultTableModel) tbHuespedes.getModel()).setRowCount(0);
 	}
 
 	// Método que permite buscar los datos de la tabla "Reservas"
@@ -327,6 +332,16 @@ public class Busqueda extends JFrame {
 		return this.huespedController.buscarApellidoHuesped(txtBuscar.getText());
 	}
 
+	private void actualizarRegistro() {
+		if (tbReservas.getSelectedRow() != -1) {
+			ActualizarReservas();
+		} else if (tbHuespedes.getSelectedRow() != -1) {
+			actualizarHuespedes();
+		} else {
+			JOptionPane.showMessageDialog(this, "Por favor, seleccione una fila para actualizar");
+		}
+	}
+
 	// Método que permite mostrar los datos de la tabla "Reservas "
 	private void mostrarTablaReservas() {
 		List<Reserva> reserva = buscarReservas();
@@ -343,6 +358,7 @@ public class Busqueda extends JFrame {
 
 	// Método que permite mostrar los datos de la tabla "Reservas " por id
 	private void mostrarTablaReservasId() {
+		eliminarTablaReservas();
 		List<Reserva> reserva = buscarReservasId();
 		try {
 			for (Reserva res : reserva) {
@@ -353,6 +369,25 @@ public class Busqueda extends JFrame {
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+
+	private void ActualizarReservas() {
+		int selectedRow = tbReservas.getSelectedRow();
+		if (selectedRow == -1) {
+			JOptionPane.showMessageDialog(this, "Por favor, seleccione una fila para actualizar");
+			return;
+		}
+
+		int id = (int) modelo.getValueAt(selectedRow, 0);
+		Date fechaE = Date.valueOf(modelo.getValueAt(selectedRow, 1).toString());
+		Date fechaS = Date.valueOf(modelo.getValueAt(selectedRow, 2).toString());
+		String valor = (String) modelo.getValueAt(selectedRow, 3);
+		String formaPago = (String) modelo.getValueAt(selectedRow, 4);
+
+		reservaController.actualizar(fechaE, fechaS, valor, formaPago, id);
+		JOptionPane.showMessageDialog(this, "Registro modificado con éxito");
+		eliminarTablaReservas();
+		mostrarTablaReservas();
 	}
 
 	private void mostrarTablaHuespedes() {
@@ -372,6 +407,7 @@ public class Busqueda extends JFrame {
 	}
 
 	private void mostrarTablaHuespedesId() {
+		eliminarTablaHuespedes();
 		List<Huesped> huespedes = buscarHuespedesId();
 
 		try {
@@ -388,6 +424,7 @@ public class Busqueda extends JFrame {
 	}
 
 	private void mostrarTablaHuespedesApellido() {
+		eliminarTablaHuespedes();
 		List<Huesped> huespedes = buscarHuespedesApellido();
 
 		try {
@@ -401,6 +438,27 @@ public class Busqueda extends JFrame {
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+
+	private void actualizarHuespedes() {
+		int selectedRow = tbHuespedes.getSelectedRow();
+		if (selectedRow == -1) {
+			JOptionPane.showMessageDialog(this, "Por favor, seleccione una fila para actualizar");
+			return;
+		}
+
+		int id = (int) modeloHuesped.getValueAt(selectedRow, 0);
+		String nombre = (String) modeloHuesped.getValueAt(selectedRow, 1);
+		String apellido = (String) modeloHuesped.getValueAt(selectedRow, 2);
+		Date fechaNacimiento = Date.valueOf(modeloHuesped.getValueAt(selectedRow, 3).toString());
+		String nacionalidad = (String) modeloHuesped.getValueAt(selectedRow, 4);
+		String telefono = (String) modeloHuesped.getValueAt(selectedRow, 5);
+		int idReserva = (int) modeloHuesped.getValueAt(selectedRow, 6);
+
+		huespedController.actualizar(nombre, apellido, fechaNacimiento, nacionalidad, telefono, idReserva, id);
+		JOptionPane.showMessageDialog(this, "Registro modificado con éxito");
+		eliminarTablaHuespedes();
+		mostrarTablaHuespedes();
 	}
 
 }

@@ -1,6 +1,7 @@
 package DAO;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -81,6 +82,23 @@ public class ReservaDAO {
                         rst.getString(5));
                 reservas.add(producto);
             }
+        }
+    }
+
+    public void actualizar(Date fechaE, Date fechaS, String valor, String formaPago, int id) {
+        String sql = "UPDATE reservas SET fecha_entrada = ?, fecha_salida = ?, valor = ?, forma_de_pago = ? WHERE id = ?";
+        try (PreparedStatement stm = conexion.prepareStatement(sql)) {
+
+            stm.setDate(1, fechaE);
+            stm.setDate(2, fechaS);
+            stm.setString(3, valor);
+            stm.setString(4, formaPago);
+            stm.setInt(5, id);
+
+            stm.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al actualizar la reserva en la base de datos.", e);
         }
     }
 }

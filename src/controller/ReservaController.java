@@ -1,6 +1,7 @@
 package controller;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.List;
 
 import DAO.ReservaDAO;
@@ -26,6 +27,10 @@ public class ReservaController {
 
     public List<Reserva> buscarId(String id) {
         return this.reservaDAO.buscarId(id);
+    }
+
+    public void actualizar(Date fechaE, Date fechaS, String valor, String formaPago, int id) {
+        this.reservaDAO.actualizar(fechaE, fechaS, valor, formaPago, id);
     }
 
 }
