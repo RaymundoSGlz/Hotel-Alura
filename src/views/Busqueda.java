@@ -274,6 +274,12 @@ public class Busqueda extends JFrame {
 		btnEditar.add(lblEditar);
 
 		JPanel btnEliminar = new JPanel();
+		btnEliminar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				eliminarRegistro();
+			}
+		});
 		btnEliminar.setLayout(null);
 		btnEliminar.setBackground(new Color(12, 138, 199));
 		btnEliminar.setBounds(767, 508, 122, 35);
@@ -342,6 +348,16 @@ public class Busqueda extends JFrame {
 		}
 	}
 
+	private void eliminarRegistro() {
+		if (tbReservas.getSelectedRow() != -1) {
+			eliminarReservas();
+		} else if (tbHuespedes.getSelectedRow() != -1) {
+			eliminarHuespedes();
+		} else {
+			JOptionPane.showMessageDialog(this, "Por favor, seleccione una fila para eliminar");
+		}
+	}
+
 	// Método que permite mostrar los datos de la tabla "Reservas "
 	private void mostrarTablaReservas() {
 		List<Reserva> reserva = buscarReservas();
@@ -388,6 +404,31 @@ public class Busqueda extends JFrame {
 		JOptionPane.showMessageDialog(this, "Registro modificado con éxito");
 		eliminarTablaReservas();
 		mostrarTablaReservas();
+	}
+
+	private void eliminarReservas() {
+		int selectedRow = tbReservas.getSelectedRow();
+		if (selectedRow == -1) {
+			JOptionPane.showMessageDialog(this, "Por favor, seleccione una fila para eliminar");
+			return;
+		}
+		int confirmar = JOptionPane.showConfirmDialog(this, "¿Está seguro de eliminar la reservación?", "Confirmación",
+				JOptionPane.YES_NO_OPTION);
+		int confirmarEliminarHuespedes = JOptionPane.showConfirmDialog(this,
+				"Eliminar una reservación también eliminará los huéspedes asociados a ella. ¿Desea continuar?",
+				"Confirmación",
+				JOptionPane.YES_NO_OPTION);
+		if (confirmar == JOptionPane.YES_OPTION && confirmarEliminarHuespedes == JOptionPane.YES_OPTION) {
+			int id = (int) modelo.getValueAt(selectedRow, 0);
+			huespedController.eliminarPorReserva(id);
+			eliminarTablaHuespedes();
+			mostrarTablaHuespedes();
+			reservaController.eliminar(id);
+			JOptionPane.showMessageDialog(this, "Registro eliminado con éxito");
+			eliminarTablaReservas();
+			mostrarTablaReservas();
+		}
+
 	}
 
 	private void mostrarTablaHuespedes() {
@@ -459,6 +500,23 @@ public class Busqueda extends JFrame {
 		JOptionPane.showMessageDialog(this, "Registro modificado con éxito");
 		eliminarTablaHuespedes();
 		mostrarTablaHuespedes();
+	}
+
+	private void eliminarHuespedes() {
+		int selectedRow = tbHuespedes.getSelectedRow();
+		if (selectedRow == -1) {
+			JOptionPane.showMessageDialog(this, "Por favor, seleccione una fila para eliminar");
+			return;
+		}
+		int confirmar = JOptionPane.showConfirmDialog(this, "¿Está seguro de eliminar el huésped?", "Confirmación",
+				JOptionPane.YES_NO_OPTION);
+		if (confirmar == JOptionPane.YES_OPTION) {
+			int id = (int) modeloHuesped.getValueAt(selectedRow, 0);
+			huespedController.eliminar(id);
+			JOptionPane.showMessageDialog(this, "Registro eliminado con éxito");
+			eliminarTablaHuespedes();
+			mostrarTablaHuespedes();
+		}
 	}
 
 }

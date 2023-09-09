@@ -127,4 +127,30 @@ public class HuespedDAO {
         }
     }
 
+    public void eliminar(int id) {
+        String sql = "DELETE FROM huespedes WHERE id = ?";
+        try (PreparedStatement stm = conexion.prepareStatement(sql)) {
+
+            stm.setInt(1, id);
+
+            stm.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al eliminar el huesped en la base de datos.", e);
+        }
+    }
+
+    public void eliminarPorReserva(int idReserva) {
+        String sql = "DELETE FROM huespedes WHERE id_reserva = ?";
+        try (PreparedStatement stm = conexion.prepareStatement(sql)) {
+
+            stm.setInt(1, idReserva);
+
+            stm.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al eliminar el huesped en la base de datos.", e);
+        }
+    }
+
 }

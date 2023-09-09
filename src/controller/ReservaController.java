@@ -33,4 +33,8 @@ public class ReservaController {
         this.reservaDAO.actualizar(fechaE, fechaS, valor, formaPago, id);
     }
 
+    public void eliminar(int id) {
+        this.reservaDAO.eliminar(id);
+    }
+
 }

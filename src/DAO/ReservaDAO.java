@@ -101,4 +101,17 @@ public class ReservaDAO {
             throw new RuntimeException("Error al actualizar la reserva en la base de datos.", e);
         }
     }
+
+    public void eliminar(int id) {
+        String sql = "DELETE FROM reservas WHERE id = ?";
+        try (PreparedStatement stm = conexion.prepareStatement(sql)) {
+
+            stm.setInt(1, id);
+
+            stm.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al eliminar la reserva en la base de datos.", e);
+        }
+    }
 }
