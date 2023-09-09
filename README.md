@@ -26,8 +26,8 @@ Que almacenará los datos de los huéspedes y las reservaciones en una base de d
 
 <table>
     <tr>
-        <td><img src="./screenshots/interfaz_inicial.png" alt="interfaz inicial"></td>
-        <td><img src="./screenshots/login.png" alt="login"></td>
+        <td><img src="./Screenshots/Interfaz_inicial.png" alt="interfaz inicial"></td>
+        <td><img src="./Screenshots/login.png" alt="login"></td>
     </tr>
 </table>
 
